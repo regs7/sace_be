@@ -60,7 +60,7 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'utils.pagination.CustomPagination',
-    'PAGE_SIZE': 1
+    'PAGE_SIZE': 10
 }
 
 ROOT_URLCONF = 'sace_be.urls'
@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-hn'
 
 TIME_ZONE = 'UTC'
 

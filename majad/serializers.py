@@ -9,8 +9,8 @@ class AdministradorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Administrador
-        fields = ('nombre', 'apellido', 'departamento', 'departamento_text')
-        read_only = ('departamento_text',)
+        fields = ('id', 'nombre', 'apellido', 'departamento', 'departamento_text')
+        read_only = ('departamento_text', 'id')
 
     def get_departamento_text(self, obj):
         departamento = Departamento.objects.using('sace1').get(id=obj.departamento)
