@@ -2,6 +2,7 @@ import time
 
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 from rest_framework import serializers, status
 
 from core.models import Departamento
@@ -47,3 +48,21 @@ class AdministradorSerializer(serializers.ModelSerializer):
         obj.usuario = usuario
         obj.save()
         return obj
+
+    def update(self, instance, validated_data):
+        correo = validated_data.pop('correo')
+        nombre = validated_data.get('nombre')
+        apellido = validated_data.get('apellido')
+
+        usuario = instance.usuario
+        usuario.first_name = nombre
+        usuario.last_name = apellido
+        usuario.username = correo
+        usuario.email = correo
+
+        try:
+            usuario.save()
+        except IntegrityError:
+            raise serializers.ValidationError("Usuario con este correo ya existe", code=status.HTTP_406_NOT_ACCEPTABLE)
+
+        return super(AdministradorSerializer, self).update(instance, validated_data)
