@@ -5,7 +5,7 @@ from majad.serializers import AdministradorSerializer
 
 
 class AdministradorListCreateView(generics.ListCreateAPIView):
-    queryset = Administrador.objects.all()
+    queryset = Administrador.objects.select_related('usuario').all()
     serializer_class = AdministradorSerializer
 
 
