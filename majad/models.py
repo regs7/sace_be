@@ -7,7 +7,22 @@ class Administrador(models.Model):
     apellido = models.CharField(max_length=256, null=False)
 
     departamento = models.IntegerField(null=False)
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        ordering = ('departamento', 'nombre', 'apellido')
+
+    @property
+    def correo(self):
+        return self.usuario.email
+
+
+class Coordinator(models.Model):
+    nombre = models.CharField(max_length=256, null=False)
+    apellido = models.CharField(max_length=256, null=False)
+
+    departamento = models.IntegerField(null=False)
+    usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ('departamento', 'nombre', 'apellido')
