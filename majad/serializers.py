@@ -67,12 +67,17 @@ class AdministradorSerializer(serializers.ModelSerializer):
 
 
 class CoordinatorSerializer(serializers.ModelSerializer):
+    departamento_text = serializers.SerializerMethodField()
     correo = serializers.CharField()
 
     class Meta:
         model = Coordinator
-        fields = ('id', 'nombre', 'apellido', 'correo')
+        fields = ('id', 'nombre', 'apellido', 'correo', 'departamento_text')
         read_only = ('id',)
+
+    def get_departamento_text(self, obj):
+        departamento = Departamento.objects.using('sace1').get(id=obj.departamento)
+        return f'{departamento.codigo} - {departamento.nombre}'
 
     def create(self, validated_data):
         request_user = self.context.get('request').user
