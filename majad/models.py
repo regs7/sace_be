@@ -50,3 +50,21 @@ class Clase(models.Model):
 
     class Meta:
         ordering = ('codigo', 'nombre')
+
+
+class MallaCurricular(models.Model):
+    codigo = models.CharField(max_length=16, unique=True, null=False)
+    nombre = models.CharField(max_length=128, null=False)
+
+    clases = models.ManyToManyField(Clase)
+
+    class Meta:
+        ordering = ('codigo',)
+
+
+class Grado(models.Model):
+    nombre = models.CharField(max_length=64, unique=True)
+    malla = models.ForeignKey(MallaCurricular, on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ('nombre',)

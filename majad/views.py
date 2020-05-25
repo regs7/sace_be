@@ -1,9 +1,15 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from majad.models import Administrador, Coordinador, CentroReferencia, Clase
-from majad.serializers import AdministradorSerializer, CoordinadorSerializer, CentroReferenciaSerializer, \
-    ClaseSerializer
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado
+from majad.serializers import (
+    AdministradorSerializer,
+    CoordinadorSerializer,
+    CentroReferenciaSerializer,
+    ClaseSerializer,
+    MallaCurricularSerializer,
+    GradoSerializer
+)
 
 
 class AdministradorListCreateView(generics.ListCreateAPIView):
@@ -54,4 +60,28 @@ class ClaseListCreateView(generics.ListCreateAPIView):
 class ClaseDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Clase.objects.all()
     serializer_class = ClaseSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class MallaCurricularListCreateView(generics.ListCreateAPIView):
+    queryset = MallaCurricular.objects.all()
+    serializer_class = MallaCurricularSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class MallaCurricularDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MallaCurricular.objects.all()
+    serializer_class = MallaCurricularSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class GradoListCreateView(generics.ListCreateAPIView):
+    queryset = Grado.objects.select_related('malla').all()
+    serializer_class = GradoSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class GradoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Grado.objects.select_related('malla').all()
+    serializer_class = GradoSerializer
     permission_classes = [IsAuthenticated]

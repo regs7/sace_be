@@ -8,7 +8,11 @@ from majad.views import (
     CentroReferenciaListCreateView,
     CentroReferenciaDetailView,
     ClaseListCreateView,
-    ClaseDetailView
+    ClaseDetailView,
+    MallaCurricularListCreateView,
+    MallaCurricularDetailView,
+    GradoListCreateView,
+    GradoDetailView
 )
 
 app_name = 'majad'
@@ -25,4 +29,10 @@ urlpatterns = [
 
     path('clase/', ClaseListCreateView.as_view()),
     path('clase/<int:pk>', ClaseDetailView.as_view()),
+
+    path('malla/', MallaCurricularListCreateView.as_view()),
+    path('malla/<int:pk>', MallaCurricularDetailView.as_view()),
+    
+    path('grado/', GradoListCreateView.as_view()),
+    path('grado/<int:pk>', GradoDetailView.as_view()),
 ]
