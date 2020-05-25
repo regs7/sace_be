@@ -3,8 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from rest_framework import serializers, status
 
-from core.models import Departamento
-from majad.models import Administrador, Coordinator
+from core.models import Departamento, CentroEducativo, Municipio
+from majad.models import Administrador, Coordinador, CentroReferencia
 
 
 class AdministradorSerializer(serializers.ModelSerializer):
@@ -66,12 +66,12 @@ class AdministradorSerializer(serializers.ModelSerializer):
         return super(AdministradorSerializer, self).update(instance, validated_data)
 
 
-class CoordinatorSerializer(serializers.ModelSerializer):
+class CoordinadorSerializer(serializers.ModelSerializer):
     departamento_text = serializers.SerializerMethodField()
     correo = serializers.CharField()
 
     class Meta:
-        model = Coordinator
+        model = Coordinador
         fields = ('id', 'nombre', 'apellido', 'correo', 'departamento_text')
         read_only = ('id',)
 
@@ -107,7 +107,7 @@ class CoordinatorSerializer(serializers.ModelSerializer):
             'usuario': usuario,
             'departamento': request_user.administrador.departamento
         })
-        obj = super(CoordinatorSerializer, self).create(validated_data)
+        obj = super(CoordinadorSerializer, self).create(validated_data)
         return obj
 
     def update(self, instance, validated_data):
@@ -126,4 +126,35 @@ class CoordinatorSerializer(serializers.ModelSerializer):
         except IntegrityError:
             raise serializers.ValidationError("Usuario con este correo ya existe", code=status.HTTP_406_NOT_ACCEPTABLE)
 
-        return super(CoordinatorSerializer, self).update(instance, validated_data)
+        return super(CoordinadorSerializer, self).update(instance, validated_data)
+
+
+class CentroReferenciaSerializer(serializers.ModelSerializer):
+    municipio_text = serializers.SerializerMethodField()
+    sede_text = serializers.SerializerMethodField()
+    coordinador_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CentroReferencia
+        fields = (
+            'id',
+            'nombre',
+            'coordinador',
+            'sede',
+            'sede_text',
+            'municipio',
+            'municipio_text',
+            'direccion',
+            'coordinador_name'
+        )
+
+    def get_municipio_text(self, obj):
+        municipio = Municipio.objects.using('sace1').get(id=obj.municipio)
+        return f'{municipio.codigo} - {municipio.nombre}'
+
+    def get_sede_text(self, obj):
+        sede = CentroEducativo.objects.using('sace1').get(id=obj.sede)
+        return f'{sede.codigo} - {sede.nombre}'
+
+    def get_coordinador_name(self, obj):
+        return f'{obj.coordinador.nombre} {obj.coordinador.apellido}'

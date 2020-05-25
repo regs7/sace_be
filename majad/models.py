@@ -17,7 +17,7 @@ class Administrador(models.Model):
         return self.usuario.email
 
 
-class Coordinator(models.Model):
+class Coordinador(models.Model):
     nombre = models.CharField(max_length=256, null=False)
     apellido = models.CharField(max_length=256, null=False)
 
@@ -30,3 +30,14 @@ class Coordinator(models.Model):
     @property
     def correo(self):
         return self.usuario.email
+
+
+class CentroReferencia(models.Model):
+    sede = models.IntegerField(null=False)
+    coordinador = models.ForeignKey('Coordinador', on_delete=models.PROTECT)
+    nombre = models.CharField(max_length=256)
+    municipio = models.IntegerField(null=False)
+    direccion = models.TextField()
+
+    class Meta:
+        ordering = ('nombre', 'municipio',)

@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from majad.models import Administrador, Coordinator
-from majad.serializers import AdministradorSerializer, CoordinatorSerializer
+from majad.models import Administrador, Coordinador, CentroReferencia
+from majad.serializers import AdministradorSerializer, CoordinadorSerializer, CentroReferenciaSerializer
 
 
 class AdministradorListCreateView(generics.ListCreateAPIView):
@@ -15,12 +15,30 @@ class AdministradorDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AdministradorSerializer
 
 
-class CoordinatorListCreateView(generics.ListCreateAPIView):
-    queryset = Coordinator.objects.select_related('usuario').all()
-    serializer_class = CoordinatorSerializer
+class CoordinadorListCreateView(generics.ListCreateAPIView):
+    queryset = Coordinador.objects.select_related('usuario').all()
+    serializer_class = CoordinadorSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super(CoordinadorListCreateView, self).get_queryset()
+        qs = qs.filter(departamento=self.request.user.administrador.departamento)
+        return qs
+
+
+class CoordinadorDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Coordinador.objects.all()
+    serializer_class = CoordinadorSerializer
     permission_classes = [IsAuthenticated]
 
 
-class CoordinatorDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Coordinator.objects.all()
-    serializer_class = CoordinatorSerializer
+class CentroReferenciaListCreateView(generics.ListCreateAPIView):
+    queryset = CentroReferencia.objects.select_related('coordinador').all()
+    serializer_class = CentroReferenciaSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CentroReferenciaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CentroReferencia.objects.all()
+    serializer_class = CentroReferenciaSerializer
+    permission_classes = [IsAuthenticated]

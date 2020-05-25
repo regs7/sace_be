@@ -3,8 +3,10 @@ from django.urls import path
 from majad.views import (
     AdministradorListCreateView,
     AdministradorDetailView,
-    CoordinatorListCreateView,
-    CoordinatorDetailView
+    CoordinadorListCreateView,
+    CoordinadorDetailView,
+    CentroReferenciaListCreateView,
+    CentroReferenciaDetailView
 )
 
 app_name = 'majad'
@@ -13,6 +15,9 @@ urlpatterns = [
     path('administrator/', AdministradorListCreateView.as_view()),
     path('administrator/<int:pk>', AdministradorDetailView.as_view()),
 
-    path('coordinator/', CoordinatorListCreateView.as_view()),
-    path('coordinator/<int:pk>', CoordinatorDetailView.as_view()),
+    path('coordinator/', CoordinadorListCreateView.as_view()),
+    path('coordinator/<int:pk>', CoordinadorDetailView.as_view()),
+
+    path('reference/school/', CentroReferenciaListCreateView.as_view()),
+    path('reference/school/<int:pk>', CentroReferenciaDetailView.as_view()),
 ]
