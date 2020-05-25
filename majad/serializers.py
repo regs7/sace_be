@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from rest_framework import serializers, status
 
 from core.models import Departamento, CentroEducativo, Municipio
-from majad.models import Administrador, Coordinador, CentroReferencia
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase
 
 
 class AdministradorSerializer(serializers.ModelSerializer):
@@ -158,3 +158,9 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
 
     def get_coordinador_name(self, obj):
         return f'{obj.coordinador.nombre} {obj.coordinador.apellido}'
+
+
+class ClaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Clase
+        fields = ('id', 'codigo', 'nombre', 'descripcion')

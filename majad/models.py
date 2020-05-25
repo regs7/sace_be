@@ -41,3 +41,12 @@ class CentroReferencia(models.Model):
 
     class Meta:
         ordering = ('nombre', 'municipio',)
+
+
+class Clase(models.Model):
+    codigo = models.CharField(max_length=16, unique=True, null=False)
+    nombre = models.CharField(max_length=128, null=False)
+    descripcion = models.TextField(default='')
+
+    class Meta:
+        ordering = ('codigo', 'nombre')

@@ -1,8 +1,9 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from majad.models import Administrador, Coordinador, CentroReferencia
-from majad.serializers import AdministradorSerializer, CoordinadorSerializer, CentroReferenciaSerializer
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase
+from majad.serializers import AdministradorSerializer, CoordinadorSerializer, CentroReferenciaSerializer, \
+    ClaseSerializer
 
 
 class AdministradorListCreateView(generics.ListCreateAPIView):
@@ -41,4 +42,16 @@ class CentroReferenciaListCreateView(generics.ListCreateAPIView):
 class CentroReferenciaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CentroReferencia.objects.all()
     serializer_class = CentroReferenciaSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ClaseListCreateView(generics.ListCreateAPIView):
+    queryset = Clase.objects.all()
+    serializer_class = ClaseSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ClaseDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Clase.objects.all()
+    serializer_class = ClaseSerializer
     permission_classes = [IsAuthenticated]
