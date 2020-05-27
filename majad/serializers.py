@@ -17,8 +17,8 @@ class AdministradorSerializer(serializers.ModelSerializer):
         read_only = ('id',)
 
     def get_departamento_text(self, obj):
-        departamento = Departamento.objects.using('sace1').get(id=obj.departamento)
-        return f'{departamento.codigo} - {departamento.nombre}'
+        departamentos = Departamento.objects.using('sace1').filter(id__in=obj.departamento)
+        return [f'{departamento.codigo} - {departamento.nombre}' for departamento in departamentos]
 
     def create(self, validated_data):
         correo = validated_data.pop('correo')
@@ -76,8 +76,8 @@ class CoordinadorSerializer(serializers.ModelSerializer):
         read_only = ('id',)
 
     def get_departamento_text(self, obj):
-        departamento = Departamento.objects.using('sace1').get(id=obj.departamento)
-        return f'{departamento.codigo} - {departamento.nombre}'
+        departamentos = Departamento.objects.using('sace1').filter(id__in=obj.departamento)
+        return [f'{departamento.codigo} - {departamento.nombre}' for departamento in departamentos]
 
     def create(self, validated_data):
         request_user = self.context.get('request').user

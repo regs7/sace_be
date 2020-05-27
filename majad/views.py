@@ -29,7 +29,7 @@ class CoordinadorListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(CoordinadorListCreateView, self).get_queryset()
-        qs = qs.filter(departamento=self.request.user.administrador.departamento)
+        qs = qs.filter(departamento__contains=self.request.user.administrador.departamento)
         return qs
 
 
