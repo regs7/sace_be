@@ -40,6 +40,8 @@ class CentroReferencia(models.Model):
     municipio = models.IntegerField(null=False)
     direccion = models.TextField()
 
+    grados = models.ManyToManyField('majad.Grado')
+
     class Meta:
         ordering = ('nombre', 'municipio',)
 

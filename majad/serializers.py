@@ -132,6 +132,7 @@ class CoordinadorSerializer(serializers.ModelSerializer):
 class CentroReferenciaSerializer(serializers.ModelSerializer):
     municipio_text = serializers.SerializerMethodField()
     sede_text = serializers.SerializerMethodField()
+    grados_text = serializers.SerializerMethodField()
     coordinador_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -145,7 +146,9 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
             'municipio',
             'municipio_text',
             'direccion',
-            'coordinador_name'
+            'coordinador_name',
+            'grados',
+            'grados_text'
         )
 
     def get_municipio_text(self, obj):
@@ -158,6 +161,9 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
 
     def get_coordinador_name(self, obj):
         return f'{obj.coordinador.nombre} {obj.coordinador.apellido}'
+
+    def get_grados_text(self, obj):
+        return [grado.nombre for grado in obj.grados.all()]
 
 
 class ClaseSerializer(serializers.ModelSerializer):
