@@ -2,11 +2,13 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
+from core.models import Municipio
+
 
 class Administrador(models.Model):
     nombre = models.CharField(max_length=256, null=False)
     apellido = models.CharField(max_length=256, null=False)
-    departamento = ArrayField(models.IntegerField(null=False))
+    departamentos = ArrayField(models.IntegerField(null=False))
 
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
@@ -17,13 +19,20 @@ class Administrador(models.Model):
     def correo(self):
         return self.usuario.email
 
+    @property
+    def municipios(self):
+        municipios = Municipio.objects.using('sace1').filter(departamento_id__in=self.departamentos)
+        return [municipio.id for municipio in municipios]
+
 
 class Coordinador(models.Model):
     nombre = models.CharField(max_length=256, null=False)
     apellido = models.CharField(max_length=256, null=False)
 
-    departamento = ArrayField(models.IntegerField(null=False))
+    departamentos = ArrayField(models.IntegerField(null=False))
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+
+    centro_referencia = models.OneToOneField('majad.CentroReferencia', on_delete=models.PROTECT, null=True)
 
     class Meta:
         ordering = ('nombre', 'apellido')
@@ -35,7 +44,6 @@ class Coordinador(models.Model):
 
 class CentroReferencia(models.Model):
     sede = models.IntegerField(null=False)
-    coordinador = models.ForeignKey('Coordinador', on_delete=models.PROTECT)
     nombre = models.CharField(max_length=256)
     municipio = models.IntegerField(null=False)
     direccion = models.TextField()
@@ -47,7 +55,7 @@ class CentroReferencia(models.Model):
 
 
 class Clase(models.Model):
-    codigo = models.CharField(max_length=16, unique=True, null=False)
+    codigo = models.CharField(max_length=64, unique=True, null=False)
     nombre = models.CharField(max_length=128, null=False)
     descripcion = models.TextField(default='')
 
@@ -56,7 +64,7 @@ class Clase(models.Model):
 
 
 class MallaCurricular(models.Model):
-    codigo = models.CharField(max_length=16, unique=True, null=False)
+    codigo = models.CharField(max_length=64, unique=True, null=False)
     nombre = models.CharField(max_length=128, null=False)
 
     clases = models.ManyToManyField(Clase)
@@ -66,7 +74,7 @@ class MallaCurricular(models.Model):
 
 
 class Grado(models.Model):
-    nombre = models.CharField(max_length=64, unique=True)
+    nombre = models.CharField(max_length=128, unique=True)
     malla = models.ForeignKey(MallaCurricular, on_delete=models.PROTECT)
 
     class Meta:

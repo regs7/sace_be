@@ -29,6 +29,8 @@ class Municipio(models.Model):
     codigo = models.CharField(max_length=2, null=False, unique=True)
     nombre = models.CharField(max_length=128, null=False)
 
+    departamento_id = models.IntegerField(null=False)
+
     class Meta:
         managed = False
         ordering = ('codigo', 'nombre',)

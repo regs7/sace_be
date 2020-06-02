@@ -8,16 +8,16 @@ from majad.models import Administrador, Coordinador, CentroReferencia, Clase, Ma
 
 
 class AdministradorSerializer(serializers.ModelSerializer):
-    departamento_text = serializers.SerializerMethodField()
+    departamentos_text = serializers.SerializerMethodField()
     correo = serializers.CharField()
 
     class Meta:
         model = Administrador
-        fields = ('id', 'nombre', 'apellido', 'departamento', 'departamento_text', 'correo')
+        fields = ('id', 'nombre', 'apellido', 'departamentos', 'departamentos_text', 'correo')
         read_only = ('id',)
 
-    def get_departamento_text(self, obj):
-        departamentos = Departamento.objects.using('sace1').filter(id__in=obj.departamento)
+    def get_departamentos_text(self, obj):
+        departamentos = Departamento.objects.using('sace1').filter(id__in=obj.departamentos)
         return [f'{departamento.codigo} - {departamento.nombre}' for departamento in departamentos]
 
     def create(self, validated_data):
@@ -67,17 +67,23 @@ class AdministradorSerializer(serializers.ModelSerializer):
 
 
 class CoordinadorSerializer(serializers.ModelSerializer):
-    departamento_text = serializers.SerializerMethodField()
+    centro_referencia_text = serializers.SerializerMethodField()
     correo = serializers.CharField()
 
     class Meta:
         model = Coordinador
-        fields = ('id', 'nombre', 'apellido', 'correo', 'departamento_text')
+        fields = (
+            'id',
+            'nombre',
+            'apellido',
+            'correo',
+            'centro_referencia',
+            'centro_referencia_text'
+        )
         read_only = ('id',)
 
-    def get_departamento_text(self, obj):
-        departamentos = Departamento.objects.using('sace1').filter(id__in=obj.departamento)
-        return [f'{departamento.codigo} - {departamento.nombre}' for departamento in departamentos]
+    def get_centro_referencia_text(self, obj):
+        return obj.centro_referencia.nombre
 
     def create(self, validated_data):
         request_user = self.context.get('request').user
@@ -105,7 +111,7 @@ class CoordinadorSerializer(serializers.ModelSerializer):
 
         validated_data.update({
             'usuario': usuario,
-            'departamento': request_user.administrador.departamento
+            'departamentos': request_user.administrador.departamentos
         })
         obj = super(CoordinadorSerializer, self).create(validated_data)
         return obj
@@ -140,7 +146,6 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'nombre',
-            'coordinador',
             'sede',
             'sede_text',
             'municipio',
@@ -160,7 +165,10 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
         return f'{sede.codigo} - {sede.nombre}'
 
     def get_coordinador_name(self, obj):
-        return f'{obj.coordinador.nombre} {obj.coordinador.apellido}'
+        coordinator_name = '-'
+        if getattr(obj, 'coordinador', False):
+            coordinator_name = f'{obj.coordinador.nombre} {obj.coordinador.apellido}'
+        return coordinator_name
 
     def get_grados_text(self, obj):
         return [grado.nombre for grado in obj.grados.all()]

@@ -2,7 +2,10 @@ from django.db.models import Q
 from rest_framework import generics
 
 from core.models import CentroEducativo, Municipio
-from core.serializers import CentroEducativoListSerializer
+from core.serializers import (
+    CentroEducativoListSerializer,
+    MunicipioListSerializer
+)
 
 
 class CentroEducativoListView(generics.ListAPIView):
@@ -18,7 +21,7 @@ class CentroEducativoListView(generics.ListAPIView):
 
 class MunicipioListView(generics.ListAPIView):
     queryset = Municipio.objects.using('sace1').all()
-    serializer_class = CentroEducativoListSerializer
+    serializer_class = MunicipioListSerializer
 
     def get_queryset(self):
         qs = super(MunicipioListView, self).get_queryset()

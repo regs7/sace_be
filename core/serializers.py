@@ -12,4 +12,4 @@ class CentroEducativoListSerializer(serializers.ModelSerializer):
 class MunicipioListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Municipio
-        fields = ('id', 'codigo', 'nombre')
+        fields = ('id', 'departamento_id', 'codigo', 'nombre')

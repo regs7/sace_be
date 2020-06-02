@@ -29,7 +29,7 @@ class CoordinadorListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(CoordinadorListCreateView, self).get_queryset()
-        qs = qs.filter(departamento__contains=self.request.user.administrador.departamento)
+        qs = qs.filter(departamentos__contains=self.request.user.administrador.departamentos)
         return qs
 
 
@@ -43,6 +43,13 @@ class CentroReferenciaListCreateView(generics.ListCreateAPIView):
     queryset = CentroReferencia.objects.select_related('coordinador').all()
     serializer_class = CentroReferenciaSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super(CentroReferenciaListCreateView, self).get_queryset()
+        municipios = self.request.query_params.get('municipios', [])
+        if municipios:
+            qs = qs.filter(municipio__in=municipios.split(','))
+        return qs
 
 
 class CentroReferenciaDetailView(generics.RetrieveUpdateDestroyAPIView):
