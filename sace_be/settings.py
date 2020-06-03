@@ -29,7 +29,7 @@ DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '0.0.0.0',
+    '172.17.32.6',
 ]
 
 # Application definition
@@ -156,5 +156,5 @@ STATIC_URL = '/static/'
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'http://0.0.0.0:3000',
+    'http://172.17.32.6'
 ]
