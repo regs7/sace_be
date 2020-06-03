@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  be:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: gunicorn sace_be.wsgi:application --bind 0.0.0.0:8000
+    env_file: docker_env.prod
+    volumes:
+      - .:/be
+    ports:
+      - "8000:8000"

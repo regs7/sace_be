@@ -24,11 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's^5rg(9evl50v&(q^la_$dku8$gop0(l#6avg8$=jl1rl&(9-l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '0.0.0.0',
 ]
 
 # Application definition
@@ -100,19 +101,19 @@ WSGI_APPLICATION = 'sace_be.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sace',
-        'USER': 'joseg',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': os.environ.get('DEFAULT_DB_NAME', ''),
+        'USER': os.environ.get('DEFAULT_DB_USER', ''),
+        'PASSWORD': os.environ.get('DEFAULT_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DEFAULT_DB_HOST', ''),
+        'PORT': os.environ.get('DEFAULT_DB_PORT', ''),
     },
     'sace1': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sace_db',
-        'USER': 'postgres',
-        'PASSWORD': '*H0ndur45*2015*$4c3*',
-        'HOST': '172.17.32.88',
-        'PORT': '6432',
+        'NAME': os.environ.get('SACE1_DB_NAME', ''),
+        'USER': os.environ.get('SACE1_DB_USER', ''),
+        'PASSWORD': os.environ.get('SACE1_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DEFAULT_DB_HOST', ''),
+        'PORT': os.environ.get('SACE1_DB_PORT', ''),
     }
 }
 
@@ -154,5 +155,6 @@ STATIC_URL = '/static/'
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'http://0.0.0.0:3000',
 ]
