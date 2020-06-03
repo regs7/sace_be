@@ -112,7 +112,7 @@ DATABASES = {
         'NAME': os.environ.get('SACE1_DB_NAME', ''),
         'USER': os.environ.get('SACE1_DB_USER', ''),
         'PASSWORD': os.environ.get('SACE1_DB_PASSWORD', ''),
-        'HOST': os.environ.get('DEFAULT_DB_HOST', ''),
+        'HOST': os.environ.get('SACE1_DB_HOST', ''),
         'PORT': os.environ.get('SACE1_DB_PORT', ''),
     }
 }
