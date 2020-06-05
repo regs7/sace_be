@@ -26,12 +26,8 @@ SECRET_KEY = 's^5rg(9evl50v&(q^la_$dku8$gop0(l#6avg8$=jl1rl&(9-l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '172.17.32.6',
-    '172.17.32.7',
-]
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -154,10 +150,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://172.17.32.6'
-    'http://172.17.32.7',
-    'http://181.210.1.199'
-]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',
+#     'http://127.0.0.1:3000',
+#     'http://172.17.32.6'
+#     'http://172.17.32.7',
+#     'http://181.210.1.199'
+# ]
