@@ -14,6 +14,10 @@ services:
         max_attempts: 3
     env_file: docker_env.prod
     volumes:
-      - .:/be
+      - be_data:/be
     ports:
       - "8000:8000"
+
+
+volumes:
+  be_data:
