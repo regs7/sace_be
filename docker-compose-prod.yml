@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-      restart: unless-stopped
     command: gunicorn sace_be.wsgi:application --bind 0.0.0.0:8000
+    restart: unless-stopped
     env_file: docker_env.prod
     volumes:
       - .:/be
