@@ -2,9 +2,16 @@ version: '3'
 
 services:
   prod:
+    image: 172.17.32.6:5000/sace_be
     build:
-      image: 172.17.32.6:5000/sace_be
-    restart: unless-stopped
+      context: .
+      dockerfile: Dockerfile.prod
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     env_file: docker_env.prod
     volumes:
       - .:/be
