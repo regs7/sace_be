@@ -3,9 +3,7 @@ version: '3'
 services:
   prod:
     build:
-      context: .
-      dockerfile: Dockerfile.prod
-    command: gunicorn sace_be.wsgi:application --bind 0.0.0.0:8000
+      image: 172.17.32.6:5000/sace_be
     restart: unless-stopped
     env_file: docker_env.prod
     volumes:
