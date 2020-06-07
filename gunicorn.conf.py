@@ -1,5 +1,5 @@
 import multiprocessing
 
-bind = "127.0.0.1:8001"
+bind = "0.0.0.0:8001"
 workers = multiprocessing.cpu_count() * 2 + 1
 forwarded_allow_ips = '*'
