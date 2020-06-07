@@ -150,10 +150,3 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:3000',
-#     'http://127.0.0.1:3000',
-#     'http://172.17.32.6'
-#     'http://172.17.32.7',
-#     'http://181.210.1.199'
-# ]

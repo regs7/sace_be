@@ -19,4 +19,4 @@ RUN pip install -r docker-requirements.txt
 EXPOSE 8001
 COPY . /app/
 
-CMD ["gunicorn", "sace_be.wsgi:application", "--bind", "0.0.0.0:8001"]
+CMD ["gunicorn", "sace_be.wsgi:application", "--config", "gunicorn.conf.py"]
