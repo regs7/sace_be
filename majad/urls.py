@@ -12,7 +12,9 @@ from majad.views import (
     MallaCurricularListCreateView,
     MallaCurricularDetailView,
     GradoListCreateView,
-    GradoDetailView
+    GradoDetailView,
+    PeriodoDetailView,
+    PeriodoListCreateView
 )
 
 app_name = 'majad'
@@ -35,4 +37,7 @@ urlpatterns = [
     
     path('grado/', GradoListCreateView.as_view()),
     path('grado/<int:pk>', GradoDetailView.as_view()),
+
+    path('periodo/', PeriodoListCreateView.as_view()),
+    path('periodo/<int:pk>', PeriodoDetailView.as_view()),
 ]

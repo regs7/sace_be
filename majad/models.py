@@ -79,3 +79,12 @@ class Grado(models.Model):
 
     class Meta:
         ordering = ('nombre',)
+
+
+class Periodo(models.Model):
+    nombre = models.CharField(max_length=128, unique=True)
+    inicio = models.DateField()
+    final = models.DateField()
+
+    class Meta:
+        ordering = ('inicio',)

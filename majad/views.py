@@ -1,14 +1,14 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo
 from majad.serializers import (
     AdministradorSerializer,
     CoordinadorSerializer,
     CentroReferenciaSerializer,
     ClaseSerializer,
     MallaCurricularSerializer,
-    GradoSerializer
+    GradoSerializer, PeriodoSerializer
 )
 
 
@@ -91,4 +91,16 @@ class GradoListCreateView(generics.ListCreateAPIView):
 class GradoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Grado.objects.select_related('malla').all()
     serializer_class = GradoSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class PeriodoListCreateView(generics.ListCreateAPIView):
+    queryset = Periodo.objects.all()
+    serializer_class = PeriodoSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class PeriodoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Periodo.objects.all()
+    serializer_class = PeriodoSerializer
     permission_classes = [IsAuthenticated]
