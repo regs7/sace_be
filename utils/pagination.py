@@ -6,7 +6,8 @@ class CustomPagination(pagination.LimitOffsetPagination):
 
     def get_paginated_response(self, data):
         next_page = self.offset + self.limit
-        has_more = next_page <= self.count
+        has_more = next_page < self.count
+
         return Response({
             'limit': self.limit,
             'nextPage': next_page if has_more else 0,
