@@ -78,7 +78,7 @@ class Grado(models.Model):
     malla = models.ForeignKey(MallaCurricular, on_delete=models.PROTECT)
 
     class Meta:
-        ordering = ('nombre',)
+        ordering = ('-id',)
 
 
 class Periodo(models.Model):

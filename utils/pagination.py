@@ -2,11 +2,14 @@ from rest_framework import pagination
 from rest_framework.response import Response
 
 
-class CustomPagination(pagination.PageNumberPagination):
+class CustomPagination(pagination.LimitOffsetPagination):
+
     def get_paginated_response(self, data):
+        next_page = self.offset + self.limit
+        has_more = next_page <= self.count
         return Response({
-            'nextPage': self.page.next_page_number() if self.page.has_next() else self.page.number,
-            'hasMorePages': self.page.has_next(),
-            'count': self.page.paginator.count,
+            'limit': self.limit,
+            'nextPage': next_page if has_more else 0,
+            'hasMorePages': has_more,
             'results': data
         })
