@@ -16,6 +16,11 @@ class AdministradorListCreateView(generics.ListCreateAPIView):
     queryset = Administrador.objects.select_related('usuario').all()
     serializer_class = AdministradorSerializer
 
+    def get_queryset(self):
+        qs = super(AdministradorListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        return qs
+
 
 class AdministradorDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Administrador.objects.all()
@@ -29,7 +34,10 @@ class CoordinadorListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(CoordinadorListCreateView, self).get_queryset()
-        qs = qs.filter(departamentos__contains=self.request.user.administrador.departamentos)
+        qs = qs.filter(
+            nombre__icontains=self.request.query_params.get('query', ''),
+            departamentos__contains=self.request.user.administrador.departamentos
+        )
         return qs
 
 
@@ -46,6 +54,7 @@ class CentroReferenciaListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(CentroReferenciaListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
         municipios = self.request.query_params.get('municipios', [])
         if municipios:
             qs = qs.filter(municipio__in=municipios.split(','))
@@ -63,6 +72,11 @@ class ClaseListCreateView(generics.ListCreateAPIView):
     serializer_class = ClaseSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        qs = super(ClaseListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        return qs
+
 
 class ClaseDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Clase.objects.all()
@@ -74,6 +88,11 @@ class MallaCurricularListCreateView(generics.ListCreateAPIView):
     queryset = MallaCurricular.objects.all()
     serializer_class = MallaCurricularSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super(MallaCurricularListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        return qs
 
 
 class MallaCurricularDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -87,6 +106,11 @@ class GradoListCreateView(generics.ListCreateAPIView):
     serializer_class = GradoSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        qs = super(GradoListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        return qs
+
 
 class GradoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Grado.objects.select_related('malla').all()
@@ -98,6 +122,11 @@ class PeriodoListCreateView(generics.ListCreateAPIView):
     queryset = Periodo.objects.all()
     serializer_class = PeriodoSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super(PeriodoListCreateView, self).get_queryset()
+        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        return qs
 
 
 class PeriodoDetailView(generics.RetrieveUpdateDestroyAPIView):
