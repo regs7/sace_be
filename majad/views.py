@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -74,7 +75,13 @@ class ClaseListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(ClaseListCreateView, self).get_queryset()
-        qs = qs.filter(nombre__icontains=self.request.query_params.get('query', ''))
+        query = self.request.query_params.get('query')
+        if query:
+            qs = qs.filter(
+                Q(codigo__icontains=query) |
+                Q(nombre__icontains=query) |
+                Q(descripcion__icontains=query)
+            )
         return qs
 
 
