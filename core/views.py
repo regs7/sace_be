@@ -1,10 +1,11 @@
 from django.db.models import Q
-from rest_framework import generics
+from rest_framework import generics, viewsets
 
-from core.models import CentroEducativo, Municipio
+from core.models import CentroEducativo, Municipio, Alumno
 from core.serializers import (
     CentroEducativoListSerializer,
-    MunicipioListSerializer
+    MunicipioListSerializer,
+    PersonaSerializer
 )
 
 
@@ -28,3 +29,12 @@ class MunicipioListView(generics.ListAPIView):
         query = self.request.query_params.get('query')
         qs = qs.filter(Q(codigo__icontains=query) | Q(nombre__icontains=query))[:10]
         return qs
+
+
+class AlumnoModelViewSet(viewsets.ModelViewSet):
+    queryset = Alumno.objects.select_related('persona').all()
+    serializer_class = PersonaSerializer
+
+    def perform_create(self, serializer):
+        persona = serializer.save()
+        Alumno.objects.create(persona=persona)

@@ -1,4 +1,6 @@
 FROM python:3.8.3-alpine3.10
+
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update \
@@ -14,4 +16,5 @@ RUN mkdir /app
 WORKDIR /app
 COPY docker-requirements.txt /app/
 RUN pip install -r docker-requirements.txt
+EXPOSE 8000
 COPY . /app/
