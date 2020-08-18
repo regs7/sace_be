@@ -1,5 +1,7 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.template.defaultfilters import date as date_filter
+from django.utils.timesince import timesince
 
 
 class CentroEducativo(models.Model):
@@ -7,6 +9,7 @@ class CentroEducativo(models.Model):
     codigo = models.CharField(max_length=14, null=False, unique=True)
     nombre = models.CharField(max_length=256, null=False)
     en_funcionamiento = models.IntegerField(null=False)
+    departamento_id = models.IntegerField(null=False)
 
     class Meta:
         managed = False
@@ -43,15 +46,33 @@ class Municipio(models.Model):
 
 
 class Persona(models.Model):
+    MASCULINO = 1
+    FEMENINO = 2
+
+    GENERO = (
+        ("M", MASCULINO),
+        ("F", FEMENINO)
+    )
+
     identidad = models.CharField(max_length=32, unique=True, null=False)
     nombre = models.CharField(max_length=256, null=False)
     apellido = models.CharField(max_length=256, null=False)
     fecha_nacimiento = models.DateField(null=False)
-    direccion = models.TextField(default='')
-    telefonos = ArrayField(models.CharField(max_length=16))
+    direccion = models.TextField(default='', null=True)
+    telefono = models.CharField(max_length=16)
+    genero = models.CharField(max_length=1, choices=GENERO, null=False)
+    contacto = models.TextField(default='')
 
     class Meta:
         ordering = ('nombre', 'apellido',)
+
+    @property
+    def nombre_completo(self):
+        return f'{self.nombre} {self.apellido}'
+
+    @property
+    def edad(self):
+        return f'{date_filter(self.fecha_nacimiento, "N d, Y")} {timesince(self.fecha_nacimiento)}'
 
 
 class Alumno(models.Model):

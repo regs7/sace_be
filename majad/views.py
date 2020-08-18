@@ -1,4 +1,6 @@
-from django.db.models import Q
+from django.contrib.auth.models import User
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -9,7 +11,9 @@ from majad.serializers import (
     CentroReferenciaSerializer,
     ClaseSerializer,
     MallaCurricularSerializer,
-    GradoSerializer, PeriodoSerializer
+    GradoSerializer,
+    PeriodoSerializer,
+    UserSerializer
 )
 
 
@@ -35,10 +39,19 @@ class CoordinadorListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = super(CoordinadorListCreateView, self).get_queryset()
-        qs = qs.filter(
-            nombre__icontains=self.request.query_params.get('query', ''),
-            departamentos__contains=self.request.user.administrador.departamentos
-        )
+        query = {
+            'nombre__icontains': self.request.query_params.get('query', '')
+        }
+        # if self.request.user.groups.filter(name='usinieh_admin').exists():
+        #     departamentos = list(Departamento.objects.using('sace1').all().values_list('pk', flat=True))
+        #     query.update({
+        #         'departamentos__contains': departamentos
+        #     })
+        # else:
+        #     query.update({
+        #         'departamentos__contains': self.request.user.administrador.departamentos
+        #     })
+        qs = qs.filter(**query)
         return qs
 
 
@@ -49,7 +62,7 @@ class CoordinadorDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CentroReferenciaListCreateView(generics.ListCreateAPIView):
-    queryset = CentroReferencia.objects.select_related('coordinador').all()
+    queryset = CentroReferencia.objects.all()
     serializer_class = CentroReferenciaSerializer
     permission_classes = [IsAuthenticated]
 
@@ -140,3 +153,22 @@ class PeriodoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Periodo.objects.all()
     serializer_class = PeriodoSerializer
     permission_classes = [IsAuthenticated]
+
+
+class UserDetailView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super(UserListView, self).get_queryset()
+        qs = qs.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(
+            Q(name__icontains=self.request.query_params.get('query', '')) |
+            Q(email__icontains=self.request.query_params.get('query', ''))
+        )
+        return qs

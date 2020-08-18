@@ -67,8 +67,8 @@ class AdministradorSerializer(serializers.ModelSerializer):
 
 
 class CoordinadorSerializer(serializers.ModelSerializer):
-    centro_referencia_text = serializers.SerializerMethodField()
     correo = serializers.CharField()
+    centro_referencia_text = serializers.SerializerMethodField()
 
     class Meta:
         model = Coordinador
@@ -83,14 +83,13 @@ class CoordinadorSerializer(serializers.ModelSerializer):
         read_only = ('id',)
 
     def get_centro_referencia_text(self, obj):
-        return obj.centro_referencia.nombre
+        return [cr.nombre for cr in obj.centro_referencia.all()]
 
     def create(self, validated_data):
-        request_user = self.context.get('request').user
-
         correo = validated_data.pop('correo')
         nombre = validated_data.get('nombre')
         apellido = validated_data.get('apellido')
+        centros_referencia = validated_data.get('centro_referencia')
 
         try:
             group = Group.objects.get(name='majad_coordinador')
@@ -110,16 +109,18 @@ class CoordinadorSerializer(serializers.ModelSerializer):
         usuario.groups.add(group)
 
         validated_data.update({
-            'usuario': usuario,
-            'departamentos': request_user.administrador.departamentos
+            'usuario': usuario
         })
+
         obj = super(CoordinadorSerializer, self).create(validated_data)
+        obj.centro_referencia.add(*centros_referencia)
         return obj
 
     def update(self, instance, validated_data):
         correo = validated_data.pop('correo')
         nombre = validated_data.get('nombre')
         apellido = validated_data.get('apellido')
+        centros_referencia = validated_data.get('centro_referencia')
 
         usuario = instance.usuario
         usuario.first_name = nombre
@@ -132,6 +133,8 @@ class CoordinadorSerializer(serializers.ModelSerializer):
         except IntegrityError:
             raise serializers.ValidationError("Usuario con este correo ya existe", code=status.HTTP_406_NOT_ACCEPTABLE)
 
+        instance.centro_referencia.clear()
+        instance.centro_referencia.add(*centros_referencia)
         return super(CoordinadorSerializer, self).update(instance, validated_data)
 
 
@@ -165,9 +168,7 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
         return f'{sede.codigo} - {sede.nombre}'
 
     def get_coordinador_name(self, obj):
-        coordinator_name = '-'
-        if getattr(obj, 'coordinador', False):
-            coordinator_name = f'{obj.coordinador.nombre} {obj.coordinador.apellido}'
+        coordinator_name = ','.join([f'{coordinador.nombre} {coordinador.apellido}' for coordinador in obj.coordinador_set.all()])
         return coordinator_name
 
     def get_grados_text(self, obj):
@@ -207,3 +208,30 @@ class PeriodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Periodo
         fields = ('id', 'nombre', 'inicio', 'final',)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'required': False
+            }
+        }
+        fields = (
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'password'
+        )
+
+    def update(self, instance, validated_data):
+        password = validated_data.get('password')
+
+        if password:
+            instance.set_password(password)
+            instance.save()
+
+        return instance

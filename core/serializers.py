@@ -23,14 +23,19 @@ class PersonaSerializer(serializers.ModelSerializer):
             'identidad',
             'nombre',
             'apellido',
+            'nombre_completo',
             'direccion',
-            'telefonos',
-            'fecha_nacimiento'
+            'telefono',
+            'fecha_nacimiento',
+            'edad',
+            'genero'
         )
+        read_only_fields = ['nombre_completo', 'edad']
 
 
 class AlumnoSerializer(serializers.ModelSerializer):
+    persona = PersonaSerializer(read_only=True)
+
     class Meta:
         model = Alumno
-        depth = 1
-        fields = ('persona',)
+        fields = ('id', 'persona',)

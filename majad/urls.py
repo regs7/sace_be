@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework.routers import SimpleRouter
 
 from core.views import AlumnoModelViewSet
 from majad.views import (
@@ -16,12 +15,17 @@ from majad.views import (
     GradoListCreateView,
     GradoDetailView,
     PeriodoDetailView,
-    PeriodoListCreateView
+    PeriodoListCreateView,
+    UserListView,
+    UserDetailView
 )
 
 app_name = 'majad'
 
 urlpatterns = [
+    path('users/', UserListView.as_view()),
+    path('users/<int:pk>', UserDetailView.as_view()),
+
     path('administrator/', AdministradorListCreateView.as_view()),
     path('administrator/<int:pk>', AdministradorDetailView.as_view()),
 

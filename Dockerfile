@@ -1,4 +1,5 @@
 FROM python:3.8.3-alpine3.10
+MAINTAINER Jose Gabriel Giron <jgabrielsk8@gmail.com>
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1

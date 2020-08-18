@@ -29,10 +29,9 @@ class Coordinador(models.Model):
     nombre = models.CharField(max_length=256, null=False)
     apellido = models.CharField(max_length=256, null=False)
 
-    departamentos = ArrayField(models.IntegerField(null=False))
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
-    centro_referencia = models.OneToOneField('majad.CentroReferencia', on_delete=models.PROTECT, null=True)
+    centro_referencia = models.ManyToManyField('majad.CentroReferencia')
 
     class Meta:
         ordering = ('nombre', 'apellido')
