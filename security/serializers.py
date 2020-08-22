@@ -16,6 +16,19 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'municipios': admin.municipios
             }
 
+        if 'majad_coordinador' in user_groups:
+            coordinator = user.coordinador
+            extra = {
+                'reference_schools': [{
+                    'id': reference_school.id,
+                    'nombre': reference_school.nombre,
+                    'grados': [{
+                        'id': grade.id,
+                        'nombre': grade.nombre
+                    } for grade in reference_school.grados.all()]
+                } for reference_school in coordinator.centro_referencia.all()]
+            }
+
         data.update({
             'groups': user_groups,
             'authenticated': True,

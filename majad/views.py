@@ -4,7 +4,7 @@ from django.db.models.functions import Concat
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo, Matricula
 from majad.serializers import (
     AdministradorSerializer,
     CoordinadorSerializer,
@@ -13,7 +13,7 @@ from majad.serializers import (
     MallaCurricularSerializer,
     GradoSerializer,
     PeriodoSerializer,
-    UserSerializer
+    UserSerializer, MatriculaSerializer
 )
 
 
@@ -42,15 +42,6 @@ class CoordinadorListCreateView(generics.ListCreateAPIView):
         query = {
             'nombre__icontains': self.request.query_params.get('query', '')
         }
-        # if self.request.user.groups.filter(name='usinieh_admin').exists():
-        #     departamentos = list(Departamento.objects.using('sace1').all().values_list('pk', flat=True))
-        #     query.update({
-        #         'departamentos__contains': departamentos
-        #     })
-        # else:
-        #     query.update({
-        #         'departamentos__contains': self.request.user.administrador.departamentos
-        #     })
         qs = qs.filter(**query)
         return qs
 
@@ -170,5 +161,26 @@ class UserListView(generics.ListAPIView):
         qs = qs.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(
             Q(name__icontains=self.request.query_params.get('query', '')) |
             Q(email__icontains=self.request.query_params.get('query', ''))
+        )
+        return qs
+
+
+class MatriculaListCreateView(generics.ListCreateAPIView):
+    queryset = Matricula.objects.all()
+    serializer_class = MatriculaSerializer
+
+    def get_serializer_context(self):
+        ctx = super(MatriculaListCreateView, self).get_serializer_context()
+        ctx.update({
+            'request': self.request
+        })
+        return ctx
+
+    def get_queryset(self):
+        qs = super(MatriculaListCreateView, self).get_queryset()
+        qs = qs.annotate(name=Concat('alumno__persona__nombre', Value(' '), 'alumno__persona__apellido'))
+        qs = qs.filter(
+            Q(name__icontains=self.request.query_params.get('query', '')) |
+            Q(centro_referencia__nombre__icontains=self.request.query_params.get('query', ''))
         )
         return qs

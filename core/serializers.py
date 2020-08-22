@@ -28,7 +28,8 @@ class PersonaSerializer(serializers.ModelSerializer):
             'telefono',
             'fecha_nacimiento',
             'edad',
-            'genero'
+            'genero',
+            'contacto'
         )
         read_only_fields = ['nombre_completo', 'edad']
 

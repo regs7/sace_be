@@ -3,8 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from rest_framework import serializers, status
 
-from core.models import Departamento, CentroEducativo, Municipio
-from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo
+from core.models import Departamento, CentroEducativo, Municipio, Alumno
+from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo, Matricula
 
 
 class AdministradorSerializer(serializers.ModelSerializer):
@@ -35,7 +35,8 @@ class AdministradorSerializer(serializers.ModelSerializer):
                 username=correo,
                 email=correo,
                 first_name=nombre,
-                last_name=apellido
+                last_name=apellido,
+                is_active=True
             )
         except ValidationError:
             raise serializers.ValidationError("Usuario con este correo ya existe", code=status.HTTP_406_NOT_ACCEPTABLE)
@@ -101,7 +102,8 @@ class CoordinadorSerializer(serializers.ModelSerializer):
                 username=correo,
                 email=correo,
                 first_name=nombre,
-                last_name=apellido
+                last_name=apellido,
+                is_active=True
             )
         except ValidationError:
             raise serializers.ValidationError("Usuario con este correo ya existe", code=status.HTTP_406_NOT_ACCEPTABLE)
@@ -178,7 +180,7 @@ class CentroReferenciaSerializer(serializers.ModelSerializer):
 class ClaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clase
-        fields = ('id', 'codigo', 'nombre', 'descripcion')
+        fields = ('id', 'codigo', 'nombre', 'descripcion', 'horas')
 
 
 class MallaCurricularSerializer(serializers.ModelSerializer):
@@ -235,3 +237,45 @@ class UserSerializer(serializers.ModelSerializer):
             instance.save()
 
         return instance
+
+
+class MatriculaSerializer(serializers.ModelSerializer):
+    alumno = serializers.SerializerMethodField()
+    periodo = PeriodoSerializer()
+    centro_referencia = CentroReferenciaSerializer()
+    grado = GradoSerializer()
+
+    class Meta:
+        model = Matricula
+        fields = (
+            'id',
+            'periodo',
+            'centro_referencia',
+            'grado',
+            'alumno'
+        )
+
+    def get_alumno(self, obj):
+        alumno = obj.alumno
+        return {
+            'id': alumno.id,
+            'identidad': alumno.persona.identidad,
+            'nombre': alumno.persona.nombre_completo,
+            'edad': alumno.persona.edad
+        }
+
+    def create(self, validated_data):
+
+        request = self.context.get("request")
+        identidad = request.data.get("alumno")
+
+        if identidad:
+            try:
+                alumno = Alumno.objects.get(persona__identidad=identidad)
+                validated_data.update({
+                    'alumno': alumno
+                })
+                return Matricula.objects.create(**validated_data)
+            except Alumno.DoesNotExist:
+                raise serializers.ValidationError(detail={'student': f'No se encontró alumno con identidad {identidad}'})
+        raise serializers.ValidationError(detail={'student', 'Campo reqeurido'})

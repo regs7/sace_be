@@ -1,6 +1,9 @@
 from django.urls import path
 
-from core.views import AlumnoModelViewSet
+from core.views import (
+    AlumnoModelViewSet,
+    AlumnoDetailView
+)
 from majad.views import (
     AdministradorListCreateView,
     AdministradorDetailView,
@@ -17,7 +20,8 @@ from majad.views import (
     PeriodoDetailView,
     PeriodoListCreateView,
     UserListView,
-    UserDetailView
+    UserDetailView,
+    MatriculaListCreateView
 )
 
 app_name = 'majad'
@@ -55,5 +59,8 @@ urlpatterns = [
         'get': 'retrieve',
         'put': 'update',
         'delete': 'destroy'
-    }))
+    })),
+    path('alumno/identity/<str:identity>', AlumnoDetailView.as_view()),
+
+    path('matricula/', MatriculaListCreateView.as_view()),
 ]

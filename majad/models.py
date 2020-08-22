@@ -57,6 +57,7 @@ class Clase(models.Model):
     codigo = models.CharField(max_length=64, unique=True, null=False)
     nombre = models.CharField(max_length=128, null=False)
     descripcion = models.TextField(default='')
+    horas = models.PositiveIntegerField(default=1)
 
     class Meta:
         ordering = ('codigo', 'nombre')
@@ -87,3 +88,13 @@ class Periodo(models.Model):
 
     class Meta:
         ordering = ('inicio',)
+
+
+class Matricula(models.Model):
+    alumno = models.ForeignKey('core.Alumno', on_delete=models.PROTECT)
+    grado = models.ForeignKey('majad.Grado', on_delete=models.PROTECT)
+    centro_referencia = models.ForeignKey('majad.CentroReferencia', on_delete=models.PROTECT)
+    periodo = models.ForeignKey('majad.Periodo', on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ('-periodo', 'centro_referencia', 'grado')

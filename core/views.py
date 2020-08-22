@@ -55,3 +55,12 @@ class AlumnoModelViewSet(viewsets.ModelViewSet):
             qs = qs.annotate(search_name=Concat('persona__nombre', Value(' '), 'persona__apellido'))
             qs = qs.filter(search_name__icontains=query)[:10]
         return qs
+
+
+class AlumnoDetailView(generics.RetrieveAPIView):
+    queryset = Alumno.objects.all()
+    serializer_class = AlumnoSerializer
+
+    def get_object(self):
+        identity = self.kwargs.get('identity', '')
+        return Alumno.objects.filter(persona__identidad=identity).first()
