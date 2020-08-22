@@ -241,17 +241,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class MatriculaSerializer(serializers.ModelSerializer):
     alumno = serializers.SerializerMethodField()
-    periodo = PeriodoSerializer()
-    centro_referencia = CentroReferenciaSerializer()
-    grado = GradoSerializer()
+    periodo_obj = serializers.SerializerMethodField()
+    centro_referencia_obj = serializers.SerializerMethodField()
+    grado_obj = serializers.SerializerMethodField()
 
     class Meta:
         model = Matricula
         fields = (
             'id',
             'periodo',
+            'periodo_obj',
             'centro_referencia',
+            'centro_referencia_obj',
             'grado',
+            'grado_obj',
             'alumno'
         )
 
@@ -263,6 +266,15 @@ class MatriculaSerializer(serializers.ModelSerializer):
             'nombre': alumno.persona.nombre_completo,
             'edad': alumno.persona.edad
         }
+
+    def get_periodo_obj(self, obj):
+        return PeriodoSerializer(instance=obj.periodo).data
+
+    def get_centro_referencia_obj(self, obj):
+        return CentroReferenciaSerializer(instance=obj.centro_referencia).data
+
+    def get_grado_obj(self, obj):
+        return GradoSerializer(instance=obj.grado).data
 
     def create(self, validated_data):
 

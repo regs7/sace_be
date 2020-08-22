@@ -21,7 +21,8 @@ from majad.views import (
     PeriodoListCreateView,
     UserListView,
     UserDetailView,
-    MatriculaListCreateView
+    MatriculaListCreateView,
+    MatriculaDetailView
 )
 
 app_name = 'majad'
@@ -63,4 +64,5 @@ urlpatterns = [
     path('alumno/identity/<str:identity>', AlumnoDetailView.as_view()),
 
     path('matricula/', MatriculaListCreateView.as_view()),
+    path('matricula/<int:pk>', MatriculaDetailView.as_view()),
 ]

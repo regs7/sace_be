@@ -3,6 +3,7 @@ from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from majad.models import Administrador, Coordinador, CentroReferencia, Clase, MallaCurricular, Grado, Periodo, Matricula
 from majad.serializers import (
@@ -184,3 +185,8 @@ class MatriculaListCreateView(generics.ListCreateAPIView):
             Q(centro_referencia__nombre__icontains=self.request.query_params.get('query', ''))
         )
         return qs
+
+
+class MatriculaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Matricula.objects.all()
+    serializer_class = MatriculaSerializer
