@@ -1,12 +1,13 @@
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from rest_framework import generics, viewsets
+from rest_framework.response import Response
 
-from core.models import CentroEducativo, Municipio, Alumno, Persona
+from core.models import CentroEducativo, Municipio, Alumno, Persona, MatriculaV1
 from core.serializers import (
     CentroEducativoListSerializer,
     MunicipioListSerializer,
-    PersonaSerializer, AlumnoSerializer
+    PersonaSerializer, AlumnoSerializer, StudentTuitionSerializer
 )
 
 
@@ -64,3 +65,15 @@ class AlumnoDetailView(generics.RetrieveAPIView):
     def get_object(self):
         identity = self.kwargs.get('identity', '')
         return Alumno.objects.filter(persona__identidad=identity).first()
+
+
+class StudentTuitionListView(generics.GenericAPIView):
+    serializer_class = StudentTuitionSerializer
+
+    def get(self, request, *args, **kwargs):
+        query = request.query_params.get('studentIdentity')
+        if query:
+            data = MatriculaV1().historico_matricula(identidad_estudiante=query)
+            serializer = self.get_serializer(data, many=True)
+            return Response(serializer.data)
+        return Response([])

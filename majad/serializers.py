@@ -297,5 +297,5 @@ class MatriculaSerializer(serializers.ModelSerializer):
                 })
                 return Matricula.objects.create(**validated_data)
             except Alumno.DoesNotExist:
-                raise serializers.ValidationError(detail={'student': f'No se encontró alumno con identidad {identidad}'})
-        raise serializers.ValidationError(detail={'student', 'Campo reqeurido'})
+                raise serializers.ValidationError(detail={'alumno': f'No se encontró alumno con identidad {identidad}'})
+        raise serializers.ValidationError(detail={'alumno', 'Campo requerido'})

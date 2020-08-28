@@ -40,3 +40,13 @@ class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
         fields = ('id', 'persona',)
+
+
+class StudentTuitionSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
+    apellido = serializers.CharField()
+    codigo = serializers.CharField()
+    centro = serializers.CharField()
+    curso = serializers.CharField()
+    seccion = serializers.CharField()
+    fecha = serializers.DateField()
